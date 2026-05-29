@@ -770,31 +770,13 @@ body {
         ⚡ Recharger maintenant
       </button>
 
-      <div class="section-label">Historique</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="section-label" style="margin:0;">Historique</div>
+        <button onclick="clearHistory()" style="background:none;border:none;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--font);padding:4px 8px;">Effacer</button>
+      </div>
       <div id="historyList">
-        <div class="history-item">
-          <div class="hist-icon">✅</div>
-          <div class="hist-info">
-            <div class="hist-title">Recharge crédit</div>
-            <div class="hist-date">Aujourd'hui · 09:12</div>
-          </div>
-          <div class="hist-amount">+500</div>
-        </div>
-        <div class="history-item">
-          <div class="hist-icon">✅</div>
-          <div class="hist-info">
-            <div class="hist-title">Recharge crédit</div>
-            <div class="hist-date">26 mai · 14:30</div>
-          </div>
-          <div class="hist-amount">+1 000</div>
-        </div>
-        <div class="history-item">
-          <div class="hist-icon">✅</div>
-          <div class="hist-info">
-            <div class="hist-title">Recharge crédit</div>
-            <div class="hist-date">22 mai · 10:00</div>
-          </div>
-          <div class="hist-amount">+500</div>
+        <div id="historyEmpty" style="text-align:center;padding:24px 0;color:var(--text3);font-size:13px;">
+          Aucune recharge pour l'instant
         </div>
       </div>
     </div>
@@ -1078,6 +1060,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function loadState() {
   const conso = S.get('conso') || {};
   if (conso.data !== undefined) updateConsoUI(conso);
+  renderHistory();
 }
 
 // ---- TABS ----
@@ -1114,30 +1097,79 @@ function doRecharge() {
     toast('Sélectionnez le montant de la carte', 'error');
     return;
   }
-  // Add to history
-  const now = new Date();
-  const dateStr = 'Aujourd\'hui · ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-  const list = document.getElementById('historyList');
-  const item = document.createElement('div');
-  item.className = 'history-item';
-  item.innerHTML = `
-    <div class="hist-icon">✅</div>
-    <div class="hist-info">
-      <div class="hist-title">Recharge crédit</div>
-      <div class="hist-date">${dateStr}</div>
-    </div>
-    <div class="hist-amount">+${selectedAmount.toLocaleString('fr-FR')}</div>
-  `;
-  list.insertBefore(item, list.firstChild);
 
+  const amount = selectedAmount;
+  const now = new Date();
+  const entry = {
+    amount,
+    code: document.getElementById('scratchCode').value,
+    date: now.toISOString()
+  };
+
+  // Save to localStorage
+  const history = S.get('history') || [];
+  history.unshift(entry);
+  if (history.length > 50) history.pop(); // max 50 entrées
+  S.set('history', history);
+
+  // Reset form
   document.getElementById('scratchCode').value = '';
   document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
   selectedAmount = null;
-  toast('✅ Recharge de ' + selectedAmount + ' FDJ validée !', 'success');
 
-  // Note: in real app this would call USSD *101*CODE#
-  // For now we simulate
-  toast('✅ Carte rechargée avec succès !', 'success');
+  // Refresh UI
+  renderHistory();
+  toast('✅ Ouverture du composeur *166*' + code + '#', 'success');
+
+  // Lance le USSD de recharge directement
+  setTimeout(() => {
+    window.location.href = 'tel:*166*' + code + '%23';
+  }, 600);
+}
+
+function renderHistory() {
+  const history = S.get('history') || [];
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+
+  // Clear all real items (keep empty placeholder)
+  Array.from(list.querySelectorAll('.history-item')).forEach(el => el.remove());
+
+  if (history.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  history.forEach(entry => {
+    const d = new Date(entry.date);
+    const today = new Date();
+    const isToday = d.toDateString() === today.toDateString();
+    const dayStr = isToday
+      ? "Aujourd'hui"
+      : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    const timeStr = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    const dateStr = dayStr + ' · ' + timeStr;
+
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML = `
+      <div class="hist-icon">✅</div>
+      <div class="hist-info">
+        <div class="hist-title">Recharge crédit</div>
+        <div class="hist-date">${dateStr}</div>
+      </div>
+      <div class="hist-amount">+${entry.amount.toLocaleString('fr-FR')}</div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function clearHistory() {
+  if (!confirm('Effacer tout l\'historique ?')) return;
+  S.set('history', []);
+  renderHistory();
+  toast('Historique effacé', '');
 }
 
 // ---- MODAL CONSO ----
