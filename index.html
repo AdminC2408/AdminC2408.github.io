@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DjibTel">
+<meta name="theme-color" content="#0a1628">
+<title>Djibouti Telecom</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a1628;
+  --bg2: #0f1f3d;
+  --bg3: #152847;
+  --card: #142035;
+  --card2: #1a2d4a;
+  --accent: #00d4a8;
+  --accent2: #00a882;
+  --accent3: #00ffc8;
+  --gold: #f5c842;
+  --red: #ff4d6d;
+  --text: #f0f4ff;
+  --text2: #8ba3c7;
+  --text3: #4d6a8a;
+  --border: rgba(0,212,168,0.15);
+  --border2: rgba(0,212,168,0.08);
+  --font: 'Sora', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Layout */
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Header */
+.header {
+  padding: calc(var(--safe-top) + 16px) 20px 0;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.logo-text {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.logo-text span { color: var(--accent); }
+
+.ussd-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 14px;
+  color: var(--accent);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.ussd-btn:active { transform: scale(0.95); background: var(--accent); color: var(--bg); }
+
+/* Balance card */
+.balance-wrap {
+  padding: 0 20px 20px;
+  background: var(--bg);
+}
+
+.balance-card {
+  background: linear-gradient(135deg, var(--card2) 0%, var(--bg3) 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(0,212,168,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.balance-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.balance-amount {
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text);
+  letter-spacing: -1px;
+}
+
+.balance-amount .currency {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-left: 4px;
+}
+
+.balance-number {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+
+.balance-pills {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: rgba(0,212,168,0.1);
+  border: 1px solid rgba(0,212,168,0.2);
+  border-radius: 20px;
+  padding: 5px 11px;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pill.warn { background: rgba(245,200,66,0.1); border-color: rgba(245,200,66,0.2); color: var(--gold); }
+.pill.danger { background: rgba(255,77,109,0.1); border-color: rgba(255,77,109,0.2); color: var(--red); }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  padding: 0 20px;
+  gap: 6px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: calc(var(--safe-top) + 68px);
+  z-index: 40;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 13px 16px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.tab .tab-icon { font-size: 16px; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Screens */
+.screens { flex: 1; overflow-y: auto; padding-bottom: calc(var(--safe-bot) + 16px); }
+.screen { display: none; padding: 20px; animation: fadeIn 0.2s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Section labels */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  margin-top: 4px;
+}
+
+/* Recharge screen */
+.amounts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.amount-btn {
+  background: var(--card);
+  border: 1.5px solid var(--border2);
+  border-radius: 14px;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.amount-btn:active, .amount-btn.selected {
+  background: rgba(0,212,168,0.12);
+  border-color: var(--accent);
+}
+
+.amount-btn .amt {
+  font-size: 17px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text);
+}
+
+.amount-btn .fdj {
+  font-size: 10px;
+  color: var(--text3);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Code input */
+.code-box {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.code-box label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.code-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 13px 14px;
+  font-size: 18px;
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--accent3);
+  letter-spacing: 3px;
+  outline: none;
+  text-transform: uppercase;
+  transition: border-color 0.2s;
+}
+
+.code-input:focus { border-color: var(--accent); }
+.code-input::placeholder { color: var(--text3); letter-spacing: 2px; font-size: 14px; }
+
+.code-hint {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.btn-main {
+  width: 100%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.btn-main:active { transform: scale(0.97); background: var(--accent2); }
+.btn-main:disabled { opacity: 0.4; pointer-events: none; }
+
+/* History */
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  background: var(--card);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border2);
+}
+
+.hist-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: rgba(0,212,168,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.hist-info { flex: 1; min-width: 0; }
+.hist-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.hist-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.hist-amount { font-size: 15px; font-weight: 700; color: var(--accent); font-family: var(--mono); }
+
+/* Solde screen */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.stat-icon { font-size: 20px; margin-bottom: 8px; display: block; }
+.stat-label { font-size: 11px; color: var(--text3); font-weight: 500; margin-bottom: 4px; }
+.stat-value { font-size: 22px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+.stat-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+
+.prog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.prog-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.prog-val { font-size: 12px; color: var(--text2); font-family: var(--mono); }
+
+.prog-track {
+  height: 6px;
+  background: var(--bg2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.prog-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+.prog-fill.warn { background: var(--gold); }
+.prog-fill.danger { background: var(--red); }
+
+.update-data-btn {
+  width: 100%;
+  background: transparent;
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+
+.update-data-btn:active { background: rgba(0,212,168,0.08); border-color: var(--accent); color: var(--accent); }
+
+/* Modal de mise à jour data */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px calc(var(--safe-bot) + 24px);
+  width: 100%;
+  max-width: 430px;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--text3);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.modal-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.modal-subtitle { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+
+.modal-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-size: 16px;
+  font-family: var(--mono);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 8px;
+}
+
+.modal-input:focus { border-color: var(--accent); }
+.modal-unit { font-size: 12px; color: var(--text3); margin-bottom: 16px; padding-left: 4px; }
+
+.modal-btns { display: flex; gap: 10px; }
+.btn-cancel {
+  flex: 1;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+}
+
+.btn-save {
+  flex: 2;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-save:active { transform: scale(0.97); }
+
+/* Forfaits screen */
+.pack-category {
+  margin-bottom: 24px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cat-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.cat-icon.data { background: rgba(0,212,168,0.15); }
+.cat-icon.combo { background: rgba(245,200,66,0.15); }
+.cat-icon.time { background: rgba(160,130,255,0.15); }
+
+.cat-title { font-size: 15px; font-weight: 700; }
+
+.pack-card {
+  background: var(--card);
+  border: 1.5px solid var(--border2);
+  border-radius: 16px;
+  padding: 0;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.pack-card:active { border-color: var(--accent); }
+
+.pack-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px 12px;
+  cursor: pointer;
+}
+
+.pack-name { font-size: 15px; font-weight: 700; }
+.pack-price {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--accent);
+}
+
+.pack-price span { font-size: 11px; color: var(--text3); font-family: var(--font); font-weight: 500; }
+
+.pack-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 0 16px 12px;
+}
+
+.pack-tag {
+  background: var(--bg2);
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pack-validity {
+  font-size: 11px;
+  color: var(--text3);
+  padding: 0 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pack-footer {
+  border-top: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  background: var(--card2);
+}
+
+.ussd-code {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 600;
+}
+
+.subscribe-btn {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 9px;
+  padding: 8px 16px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.subscribe-btn:active { transform: scale(0.95); background: var(--accent2); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: calc(var(--safe-bot) + 24px);
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 999;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--accent); color: var(--bg); }
+.toast.error { background: var(--red); color: #fff; }
+
+/* Scrollbar */
+.screens::-webkit-scrollbar { width: 3px; }
+.screens::-webkit-scrollbar-track { background: transparent; }
+.screens::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-icon">📡</div>
+        <div class="logo-text">Djib<span>Tel</span></div>
+      </div>
+      <a href="tel:*168%23" class="ussd-btn" onclick="toast('Ouverture du composeur...', '')">
+        💰 *168# Solde
+      </a>
+    </div>
+  </div>
+
+  <!-- BALANCE CARD -->
+  <div class="balance-wrap">
+    <div class="balance-card">
+      <div class="balance-label">Crédit disponible</div>
+      <div class="balance-row">
+        <div class="balance-amount" id="balanceDisplay">
+          — <span class="currency">FDJ</span>
+        </div>
+        <div class="balance-number" id="phoneDisplay">+253 77 ·· ·· ··</div>
+      </div>
+      <div class="balance-pills" id="statusPills">
+        <div class="pill">📶 Appuyez sur *168#</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('recharge', this)">
+      <span class="tab-icon">💳</span> Recharge
+    </div>
+    <div class="tab" onclick="showTab('solde', this)">
+      <span class="tab-icon">📊</span> Ma Conso
+    </div>
+    <div class="tab" onclick="showTab('forfaits', this)">
+      <span class="tab-icon">📦</span> Forfaits
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- RECHARGE -->
+    <div id="screen-recharge" class="screen active">
+
+      <div class="section-label">Montant de la carte</div>
+      <div class="amounts-grid" id="amountsGrid">
+        <div class="amount-btn" onclick="selectAmount(500, this)">
+          <div class="amt">500</div><div class="fdj">FDJ</div>
+        </div>
+        <div class="amount-btn" onclick="selectAmount(1000, this)">
+          <div class="amt">1 000</div><div class="fdj">FDJ</div>
+        </div>
+        <div class="amount-btn" onclick="selectAmount(2000, this)">
+          <div class="amt">2 000</div><div class="fdj">FDJ</div>
+        </div>
+        <div class="amount-btn" onclick="selectAmount(5000, this)">
+          <div class="amt">5 000</div><div class="fdj">FDJ</div>
+        </div>
+        <div class="amount-btn" onclick="selectAmount(10000, this)">
+          <div class="amt">10 000</div><div class="fdj">FDJ</div>
+        </div>
+      </div>
+
+      <div class="code-box">
+        <label>Code de la carte à gratter</label>
+        <input type="text" id="scratchCode" class="code-input"
+          placeholder="XXXX-XXXX-XXXX"
+          maxlength="14"
+          autocomplete="off"
+          spellcheck="false"
+          oninput="formatCode(this)" />
+        <div class="code-hint">Grattez la zone argentée et saisissez le code</div>
+      </div>
+
+      <button class="btn-main" id="rechargeBtn" onclick="doRecharge()">
+        ⚡ Recharger maintenant
+      </button>
+
+      <div class="section-label">Historique</div>
+      <div id="historyList">
+        <div class="history-item">
+          <div class="hist-icon">✅</div>
+          <div class="hist-info">
+            <div class="hist-title">Recharge crédit</div>
+            <div class="hist-date">Aujourd'hui · 09:12</div>
+          </div>
+          <div class="hist-amount">+500</div>
+        </div>
+        <div class="history-item">
+          <div class="hist-icon">✅</div>
+          <div class="hist-info">
+            <div class="hist-title">Recharge crédit</div>
+            <div class="hist-date">26 mai · 14:30</div>
+          </div>
+          <div class="hist-amount">+1 000</div>
+        </div>
+        <div class="history-item">
+          <div class="hist-icon">✅</div>
+          <div class="hist-info">
+            <div class="hist-title">Recharge crédit</div>
+            <div class="hist-date">22 mai · 10:00</div>
+          </div>
+          <div class="hist-amount">+500</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOLDE / CONSO -->
+    <div id="screen-solde" class="screen">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon">📞</span>
+          <div class="stat-label">Appels</div>
+          <div class="stat-value" id="statMinutes">—</div>
+          <div class="stat-sub" id="statMinutesSub">Non configuré</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">💬</span>
+          <div class="stat-label">SMS</div>
+          <div class="stat-value" id="statSMS">—</div>
+          <div class="stat-sub" id="statSMSSub">Non configuré</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🌐</span>
+          <div class="stat-label">Data restante</div>
+          <div class="stat-value" id="statData">—</div>
+          <div class="stat-sub" id="statDataSub">Non configuré</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">⏳</span>
+          <div class="stat-label">Validité</div>
+          <div class="stat-value" id="statDays">—</div>
+          <div class="stat-sub" id="statDaysSub">Non configuré</div>
+        </div>
+      </div>
+
+      <div class="section-label">Consommation</div>
+
+      <div class="progress-card">
+        <div class="prog-header">
+          <span class="prog-name">📞 Appels voix</span>
+          <span class="prog-val" id="progMinVal">— / — min</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="progMin" style="width:0%"></div></div>
+      </div>
+
+      <div class="progress-card">
+        <div class="prog-header">
+          <span class="prog-name">🌐 Data mobile</span>
+          <span class="prog-val" id="progDataVal">— / — Go</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="progData" style="width:0%"></div></div>
+      </div>
+
+      <div class="progress-card">
+        <div class="prog-header">
+          <span class="prog-name">💬 SMS</span>
+          <span class="prog-val" id="progSMSVal">— / —</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="progSMS" style="width:0%"></div></div>
+      </div>
+
+      <div style="margin-top:16px; margin-bottom:8px;" class="section-label">Mettre à jour ma consommation</div>
+
+      <a href="tel:*168*2%23" class="update-data-btn" onclick="toast('Composeur ouvert — revenez saisir votre data', '')">
+        📡 Vérifier ma data via *168*2#
+      </a>
+
+      <button class="update-data-btn" onclick="openDataModal()">
+        ✏️ Saisir manuellement ma consommation
+      </button>
+
+    </div>
+
+    <!-- FORFAITS -->
+    <div id="screen-forfaits" class="screen">
+
+      <!-- DATA PACK -->
+      <div class="pack-category">
+        <div class="category-header">
+          <div class="cat-icon data">📶</div>
+          <div class="cat-title">Data Pack</div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div>
+              <div class="pack-name">Express</div>
+            </div>
+            <div class="pack-price">200 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">🌐 1 GB</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 1 jour</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*2*1*1#</div>
+            <a href="tel:*164*2*1*1%23" class="subscribe-btn" onclick="toast('Souscription Express lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div><div class="pack-name">Découverte</div></div>
+            <div class="pack-price">500 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">🌐 5 GB</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 3 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*2*2*1#</div>
+            <a href="tel:*164*2*2*1%23" class="subscribe-btn" onclick="toast('Souscription Découverte lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div><div class="pack-name">Évasion</div></div>
+            <div class="pack-price">1 000 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">🌐 12 GB</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 7 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*2*3*1#</div>
+            <a href="tel:*164*2*3*1%23" class="subscribe-btn" onclick="toast('Souscription Évasion lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div>
+              <div class="pack-name">Confort</div>
+            </div>
+            <div class="pack-price">3 000 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">🌐 20 GB</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 30 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*2*4*1#</div>
+            <a href="tel:*164*2*4*1%23" class="subscribe-btn" onclick="toast('Souscription Confort lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMBO PACK -->
+      <div class="pack-category">
+        <div class="category-header">
+          <div class="cat-icon combo">📦</div>
+          <div class="cat-title">Combo Pack</div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div><div class="pack-name">Classic</div></div>
+            <div class="pack-price">500 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">📞 35 min</div>
+            <div class="pack-tag">🌐 100 MB</div>
+            <div class="pack-tag">💬 50 SMS</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 30 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*1*1*1#</div>
+            <a href="tel:*164*1*1*1%23" class="subscribe-btn" onclick="toast('Souscription Classic lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+
+        <div class="pack-card" style="border-color: rgba(0,212,168,0.4);">
+          <div class="pack-card-header">
+            <div>
+              <div class="pack-name">Medium ⭐</div>
+            </div>
+            <div class="pack-price">1 000 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">📞 70 min</div>
+            <div class="pack-tag">🌐 200 MB</div>
+            <div class="pack-tag">💬 100 SMS</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 30 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*1*2*1#</div>
+            <a href="tel:*164*1*2*1%23" class="subscribe-btn" onclick="toast('Souscription Medium lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div><div class="pack-name">Premium</div></div>
+            <div class="pack-price">2 000 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">📞 155 min</div>
+            <div class="pack-tag">🌐 400 MB</div>
+            <div class="pack-tag">💬 250 SMS</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 30 jours</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*1*3*1#</div>
+            <a href="tel:*164*1*3*1%23" class="subscribe-btn" onclick="toast('Souscription Premium lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIME BASED PACK -->
+      <div class="pack-category">
+        <div class="category-header">
+          <div class="cat-icon time">🌙</div>
+          <div class="cat-title">Time Based Pack</div>
+        </div>
+
+        <div class="pack-card">
+          <div class="pack-card-header">
+            <div><div class="pack-name">Sensation</div></div>
+            <div class="pack-price">500 <span>FDJ</span></div>
+          </div>
+          <div class="pack-tags">
+            <div class="pack-tag">🌐 Internet illimité</div>
+            <div class="pack-tag">🌙 Nuit uniquement</div>
+          </div>
+          <div class="pack-validity">⏱ Validité : 1 nuit</div>
+          <div class="pack-footer">
+            <div class="ussd-code">*164*3*1*1#</div>
+            <a href="tel:*164*3*1*1%23" class="subscribe-btn" onclick="toast('Souscription Sensation lancée...', 'success')">Souscrire</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SAISIE CONSO -->
+<div class="modal-overlay" id="dataModal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Mettre à jour ma consommation</div>
+    <div class="modal-subtitle">Composez *168*2# pour voir votre solde, puis saisissez les valeurs ci-dessous.</div>
+
+    <label style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;">Data restante</label>
+    <input type="number" id="inputData" class="modal-input" placeholder="ex: 8.5" step="0.1" min="0">
+    <div class="modal-unit">En Go (gigaoctets)</div>
+
+    <label style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;">Minutes restantes</label>
+    <input type="number" id="inputMin" class="modal-input" placeholder="ex: 45" step="1" min="0">
+    <div class="modal-unit">En minutes</div>
+
+    <label style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;">SMS restants</label>
+    <input type="number" id="inputSMS" class="modal-input" placeholder="ex: 30" step="1" min="0">
+    <div class="modal-unit" style="margin-bottom:20px;">Nombre de SMS</div>
+
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveConsommation()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ---- STATE (localStorage) ----
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem('djibtel_' + k)); } catch { return null; } },
+  set: (k, v) => localStorage.setItem('djibtel_' + k, JSON.stringify(v))
+};
+
+// ---- INIT ----
+window.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+});
+
+function loadState() {
+  const conso = S.get('conso') || {};
+  if (conso.data !== undefined) updateConsoUI(conso);
+}
+
+// ---- TABS ----
+function showTab(name, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  el.classList.add('active');
+}
+
+// ---- RECHARGE ----
+let selectedAmount = null;
+
+function selectAmount(amount, el) {
+  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAmount = amount;
+}
+
+function formatCode(input) {
+  let val = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  let parts = [];
+  for (let i = 0; i < val.length && i < 12; i += 4) parts.push(val.slice(i, i + 4));
+  input.value = parts.join('-');
+}
+
+function doRecharge() {
+  const code = document.getElementById('scratchCode').value.replace(/-/g, '');
+  if (code.length < 12) {
+    toast('Code incomplet — 12 caractères requis', 'error');
+    return;
+  }
+  if (!selectedAmount) {
+    toast('Sélectionnez le montant de la carte', 'error');
+    return;
+  }
+  // Add to history
+  const now = new Date();
+  const dateStr = 'Aujourd\'hui · ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const list = document.getElementById('historyList');
+  const item = document.createElement('div');
+  item.className = 'history-item';
+  item.innerHTML = `
+    <div class="hist-icon">✅</div>
+    <div class="hist-info">
+      <div class="hist-title">Recharge crédit</div>
+      <div class="hist-date">${dateStr}</div>
+    </div>
+    <div class="hist-amount">+${selectedAmount.toLocaleString('fr-FR')}</div>
+  `;
+  list.insertBefore(item, list.firstChild);
+
+  document.getElementById('scratchCode').value = '';
+  document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+  selectedAmount = null;
+  toast('✅ Recharge de ' + selectedAmount + ' FDJ validée !', 'success');
+
+  // Note: in real app this would call USSD *101*CODE#
+  // For now we simulate
+  toast('✅ Carte rechargée avec succès !', 'success');
+}
+
+// ---- MODAL CONSO ----
+function openDataModal() {
+  const conso = S.get('conso') || {};
+  if (conso.data !== undefined) document.getElementById('inputData').value = conso.data;
+  if (conso.min !== undefined) document.getElementById('inputMin').value = conso.min;
+  if (conso.sms !== undefined) document.getElementById('inputSMS').value = conso.sms;
+  document.getElementById('dataModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('dataModal').classList.remove('open');
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('dataModal')) closeModal();
+}
+
+function saveConsommation() {
+  const data = parseFloat(document.getElementById('inputData').value) || 0;
+  const min = parseInt(document.getElementById('inputMin').value) || 0;
+  const sms = parseInt(document.getElementById('inputSMS').value) || 0;
+
+  const conso = { data, min, sms, updatedAt: new Date().toISOString() };
+  S.set('conso', conso);
+  updateConsoUI(conso);
+  closeModal();
+  toast('✅ Consommation mise à jour', 'success');
+}
+
+function updateConsoUI(conso) {
+  const { data, min, sms } = conso;
+
+  // Stats
+  document.getElementById('statData').textContent = data >= 1 ? data.toFixed(1) + ' Go' : (data * 1024).toFixed(0) + ' Mo';
+  document.getElementById('statDataSub').textContent = 'Mis à jour';
+  document.getElementById('statMinutes').textContent = min + ' min';
+  document.getElementById('statMinutesSub').textContent = 'Appels voix';
+  document.getElementById('statSMS').textContent = sms;
+  document.getElementById('statSMSSub').textContent = 'Messages';
+
+  // Progress bars (on suppose un max indicatif)
+  const maxData = 20;
+  const maxMin = 155;
+  const maxSMS = 250;
+  const pctData = Math.min(100, (data / maxData) * 100);
+  const pctMin = Math.min(100, (min / maxMin) * 100);
+  const pctSMS = Math.min(100, (sms / maxSMS) * 100);
+
+  const elData = document.getElementById('progData');
+  elData.style.width = pctData + '%';
+  elData.className = 'prog-fill' + (pctData < 20 ? ' danger' : pctData < 40 ? ' warn' : '');
+
+  const elMin = document.getElementById('progMin');
+  elMin.style.width = pctMin + '%';
+  elMin.className = 'prog-fill' + (pctMin < 20 ? ' danger' : pctMin < 40 ? ' warn' : '');
+
+  const elSMS = document.getElementById('progSMS');
+  elSMS.style.width = pctSMS + '%';
+  elSMS.className = 'prog-fill' + (pctSMS < 20 ? ' danger' : pctSMS < 40 ? ' warn' : '');
+
+  document.getElementById('progDataVal').textContent = data.toFixed(1) + ' / ' + maxData + ' Go';
+  document.getElementById('progMinVal').textContent = min + ' / ' + maxMin + ' min';
+  document.getElementById('progSMSVal').textContent = sms + ' / ' + maxSMS;
+
+  // Pills
+  const pills = document.getElementById('statusPills');
+  pills.innerHTML = '';
+  const addPill = (text, cls) => {
+    const p = document.createElement('div');
+    p.className = 'pill' + (cls ? ' ' + cls : '');
+    p.textContent = text;
+    pills.appendChild(p);
+  };
+  addPill('🌐 ' + (data >= 1 ? data.toFixed(1) + ' Go' : (data*1024).toFixed(0) + ' Mo'));
+  addPill('📞 ' + min + ' min');
+  if (data < 1) addPill('⚠️ Data faible', 'danger');
+  else if (data < 3) addPill('Data bientôt épuisée', 'warn');
+}
+
+// ---- TOAST ----
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' ' + type : '') + ' show';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
